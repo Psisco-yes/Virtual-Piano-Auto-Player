@@ -1,0 +1,10 @@
+input.txt - paste a virtual piano sheet here and launch AutoVP.exe
+
+a - white key
+A - black key
+abcd - played at latency spacing
+a b c d - two times latency spacing
+a|b - four times latency spacing
+[a b c d] - half latency spacing
+[abcd] - played together
+Line break is treated like a single Space.
