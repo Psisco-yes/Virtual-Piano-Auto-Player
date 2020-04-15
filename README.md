@@ -4,8 +4,7 @@ Simple virtual piano auto player written in c++. If there are any bugs, me noob.
 Note: Tested only on Windows Roblox and virtualpiano.net.
 
 # Small update:
-Now it should play white and black keys at the same time (added mutex as tiny delay).
 
-Ability for the program to play [abc def] notes.
+Ability for the program to play [abc def] notes and white and black keys at the same time.
 
 Tiny improvements and other things I forgot.
