@@ -20,28 +20,28 @@ void KeyPress(char key){
 	kib.ki.time = 0;
 	kib.ki.wVk = 0;
 	kib.ki.dwExtraInfo = 0;
-	kib.ki.dwFlags = KEYEVENTF_SCANCODE;
-	UINT mkey = MapVirtualKey(LOBYTE(VkKeyScan(key)),0);
+	mi.lock();
 	
 	if(isupper(key) or ispunct(key)){
-		mi.lock();
 		yah = true;
-		mi.unlock();
+		kib.ki.dwFlags = KEYEVENTF_SCANCODE;
 		kib.ki.wScan = 0x2A;
 		SendInput(1, &kib, sizeof(INPUT));
 	}
 	
-	kib.ki.wScan = mkey;
+	kib.ki.dwFlags = KEYEVENTF_SCANCODE;
+	kib.ki.wScan = MapVirtualKey(LOBYTE(VkKeyScan(key)),0);
 	SendInput(1, &kib, sizeof(INPUT));
-	
-	if(yah){
-		kib.ki.wScan = 0x2A;
-		kib.ki.dwFlags = KEYEVENTF_SCANCODE | KEYEVENTF_KEYUP;
-		SendInput(1, &kib, sizeof(INPUT));
-	}
 	
 	kib.ki.dwFlags = KEYEVENTF_SCANCODE | KEYEVENTF_KEYUP;
 	SendInput(1, &kib, sizeof(INPUT));
+
+	if(yah){
+		kib.ki.dwFlags = KEYEVENTF_SCANCODE | KEYEVENTF_KEYUP;
+		kib.ki.wScan = 0x2A;
+		SendInput(1, &kib, sizeof(INPUT));
+	}
+	mi.unlock();
 }
 
 int main(){
@@ -61,7 +61,7 @@ int main(){
 				int j=0;
 				while(true){
 					if(a[i+j+1]==']' or a[i+j+1]==' ') break;
-					else j++;
+					j++;
 				}
 				
 				vector<thread> mainth;
@@ -81,6 +81,7 @@ int main(){
 				} 
 				
 				i+=j+1;
+				Sleep(lat);
 			}
 			else if(a[i]==' '){
 				Sleep(lat*2);
@@ -90,6 +91,7 @@ int main(){
 			} else{
 				Sleep(lat);
 				KeyPress(a[i]);
+				Sleep(lat);
 			}
 		}
 		Sleep(lat*2);
