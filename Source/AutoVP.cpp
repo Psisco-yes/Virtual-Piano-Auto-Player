@@ -1,65 +1,47 @@
+#define WINVER 0x0500
 #include <windows.h>
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include <string>
 #include <thread>
 #include <ctype.h>
 #include <stdio.h>
+#include <mutex>
 using namespace std;
 
 double lat;
+mutex mi;
 
 void KeyPress(char key){
 	INPUT kib;
 	bool yah = false;
-	
-	if(key == ']') return;
-	
-	if(isalpha(key) and isupper(key)){
-		yah = true;
-		kib.type = INPUT_KEYBOARD;
-		kib.ki.time = 0;
-		kib.ki.dwFlags = KEYEVENTF_SCANCODE;
-		kib.ki.wScan = 0x2A;
-		kib.ki.wVk = 0;
-		kib.ki.dwExtraInfo = 0;
-		SendInput(1, &kib, sizeof(INPUT));
-	}
-	
-	if(ispunct(key)){
-		yah = true;
-		kib.type = INPUT_KEYBOARD;
-		kib.ki.time = 0;
-		kib.ki.dwFlags = KEYEVENTF_SCANCODE;
-		kib.ki.wScan = 0x2A;
-		kib.ki.wVk = 0;
-		kib.ki.dwExtraInfo = 0;
-		SendInput(1, &kib, sizeof(INPUT));
-	}
-	
-	char vkey = VkKeyScan(key);
-	UINT mkey = MapVirtualKey(LOBYTE(vkey),0);
-	
 	kib.type = INPUT_KEYBOARD;
 	kib.ki.time = 0;
+	kib.ki.wVk = 0;
+	kib.ki.dwExtraInfo = 0;
 	kib.ki.dwFlags = KEYEVENTF_SCANCODE;
+	UINT mkey = MapVirtualKey(LOBYTE(VkKeyScan(key)),0);
+	
+	if(isupper(key) or ispunct(key)){
+		mi.lock();
+		yah = true;
+		mi.unlock();
+		kib.ki.wScan = 0x2A;
+		SendInput(1, &kib, sizeof(INPUT));
+	}
+	
 	kib.ki.wScan = mkey;
-	kib.ki.wVk = 0;
-	kib.ki.dwExtraInfo = 0;
-	
-	SendInput(1, &kib, sizeof(INPUT));
-	Sleep(lat);
-	kib.ki.dwFlags = KEYEVENTF_SCANCODE | KEYEVENTF_KEYUP;
-	SendInput(1, &kib, sizeof(INPUT));
-
-	kib.type = INPUT_KEYBOARD;
-	kib.ki.time = 0;
-	kib.ki.dwFlags = KEYEVENTF_SCANCODE | KEYEVENTF_KEYUP;
-	kib.ki.wScan = 0x2A;
-	kib.ki.wVk = 0;
-	kib.ki.dwExtraInfo = 0;
 	SendInput(1, &kib, sizeof(INPUT));
 	
+	if(yah){
+		kib.ki.wScan = 0x2A;
+		kib.ki.dwFlags = KEYEVENTF_SCANCODE | KEYEVENTF_KEYUP;
+		SendInput(1, &kib, sizeof(INPUT));
+	}
+	
+	kib.ki.dwFlags = KEYEVENTF_SCANCODE | KEYEVENTF_KEYUP;
+	SendInput(1, &kib, sizeof(INPUT));
 }
 
 int main(){
@@ -74,34 +56,32 @@ int main(){
 		getline(input, a);
 		for(int i=0; i<a.length(); i++){
 			if(a[i]=='['){
-				Sleep(lat); 
+				Sleep(lat);
+				repeat:
 				int j=0;
 				while(true){
-					if(a[i+j]==']') break;
+					if(a[i+j+1]==']' or a[i+j+1]==' ') break;
 					else j++;
 				}
 				
-				if(a[i+2]==' '){
-					for(int f=0; f<j; f++){
-						if(a[i+f+1]!=' ')KeyPress(a[i+f+1]);
-						else Sleep(lat/2);
-					}
-					break;
-				}
-				
-				thread main[j];
+				vector<thread> mainth;
 				
 				for(int f=0; f<j; f++){
-					main[f] = thread(KeyPress,a[i+f+1]);
+					mainth.push_back(thread(KeyPress,a[i+f+1]));
 				}
 				
-				for(int f=0; f<j; f++){
-					main[f].join();
+				for(auto& thread : mainth){
+					thread.join();
 				}
 				
-				i+=j;
+				if(a[i+j+1]==' '){
+					Sleep(lat/2);
+					i+=j+1;
+					goto repeat;
+				} 
+				
+				i+=j+1;
 			}
-			else if(a[i]==']');
 			else if(a[i]==' '){
 				Sleep(lat*2);
 			}
@@ -115,6 +95,7 @@ int main(){
 		Sleep(lat*2);
 	}
 	input.close();
-	cout<<"You can now close the program.";
+	cout<<"You can now close the program."<<endl;
+	system("pause");
 	return 0;
 }
