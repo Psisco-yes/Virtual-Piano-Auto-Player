@@ -94,7 +94,6 @@ int main(){
 				Sleep(lat);
 			}
 		}
-		Sleep(lat*2);
 	}
 	input.close();
 	cout<<"You can now close the program."<<endl;
