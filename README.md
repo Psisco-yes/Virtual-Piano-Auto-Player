@@ -8,3 +8,5 @@ Note: Tested only on Windows Roblox and virtualpiano.net.
 Ability for the program to play [abc def] notes and white and black keys at the same time.
 
 Tiny improvements and other things I forgot.
+
+Line breaks don't affect music (make sure to add spaces where needed is music sheets).
