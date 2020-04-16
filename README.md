@@ -9,4 +9,4 @@ Ability for the program to play [abc def] notes and white and black keys at the 
 
 Tiny improvements and other things I forgot.
 
-Line breaks don't affect music (make sure to add spaces where needed is music sheets).
+Line breaks don't affect music (make sure to add spaces where needed in music sheets).
