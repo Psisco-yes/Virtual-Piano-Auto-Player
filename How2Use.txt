@@ -7,4 +7,3 @@ a b c d - two times latency spacing.
 a|b - four times latency spacing.
 [a b c d] - half latency spacing.
 [abcd] - played together.
-Line break treated like latency spacing.
